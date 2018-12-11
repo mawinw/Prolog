@@ -32,7 +32,23 @@ showboard() :- getboard(N1,N2,N3,N4,N5,N6,N7,N8,N9),
 	writef("| %w %w %w |\n",[N7,N8,N9]),
 	writef("|-------|\n").
 
-swap(N1,N2) :- board(P1,N1), board(P2,N2),valid(P1,P2), retract(board(P1,N1)), retract(board(P2,N2)), assertz(board(P1,N2)), assertz(board(P2,N1)), showboard,checkwincondition.
+swap(N1,N2) :- 
+	board(P1,N1),
+	board(P2,N2),
+	valid(P1,P2), 
+	retract(board(P1,N1)), 
+	retract(board(P2,N2)), 
+	assertz(board(P1,N2)), 
+	assertz(board(P2,N1)), 
+	showboard,
+	checkwincondition.
+
+swap(N1,N2) :- 
+	board(P1,N1),
+	board(P2,N2),
+	\+valid(P1,P2),
+	showboard,
+	checkwincondition.
 
 valid(1,2).
 valid(1,4).
@@ -58,8 +74,38 @@ valid(8,7).
 valid(8,9).
 valid(9,6).
 valid(9,8).
-valid(_Y,_X).
+/*
+0 1 2 i
+3 4 5
+6 7 8
+j
 
+3*i+j
+abs(i1-i2)+abs(j1-j2)=1
+
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+valid(P1, P2):-
+	X1 is (P1-1) div 3,
+	X2 is (P2-1) div 3,
+	Y1 is (P1-1) mod 3,
+	Y2 is (P2-1) mod 3,
+	1 is abs(X1-X2) + abs(Y1-Y2).
+
+valid(P1, P2):- P1 > P2, valid(P2, P1).
+valid(P1, P2):- R is P2 mod 3, R /== 0, P2 is P1 + 1.
+valid(P1, P2):- P1 <= 6, P2 is P1 + 3.
 
 checkwincondition :- getboard(1,2,3,4,5,6,7,8,9), writef("\n\n\t!! YOU WIN !!\n\n").
 checkwincondition.
